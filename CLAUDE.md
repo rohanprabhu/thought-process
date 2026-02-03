@@ -17,15 +17,29 @@ make clean          # Remove binary and tmp/
 
 ## Architecture
 
-Single-file server (`main.go`) that registers MCP tools and runs on `mcp.StdioTransport`. Tools are added with `mcp.AddTool` using typed argument structs — the SDK infers JSON schemas from struct tags automatically.
+`main.go` wires together the store, process manager, and MCP tools, then runs the server on `mcp.StdioTransport`. Tools are added with `mcp.AddTool` using typed argument structs — the SDK infers JSON schemas from struct tags automatically.
 
 The `jsonschema` struct tag provides property descriptions but must not start with `WORD=` (e.g., use `jsonschema:"the message"` not `jsonschema:"description=the message"`).
+
+```
+main.go
+  ├── store.NewDirStore(~/.thought-process/data/)
+  ├── process.NewManager(store, ~/.thought-process/logs/)
+  ├── tools.RegisterEcho(server)
+  └── tools.RegisterProcessTools(server, manager)
+```
+
+**Data directory:** `~/.thought-process/` contains `data/` (one file per key, no long-running locks) and `logs/` (process stdout/stderr).
 
 ### MCP Tools
 
 | Tool | Args | Description |
 |------|------|-------------|
 | `echo` | `message` (string) | Echoes back a greeting with the provided message |
+| `start_process` | `command` (string, required), `args` ([]string), `cwd` (string), `tags` (map), `ports` ([]int) | Start a subprocess and track it |
+| `list_processes` | `exited_since_duration` (int, default 10) | List tracked processes; exited ones filtered to last N seconds |
+| `get_process_logs` | `process_id` (string, required) | Get the last ~100KB of a process's logs |
+| `kill_process` | `process_id` (string, required) | Kill a process (SIGTERM, then SIGKILL after 5s) |
 
 ## Maintaining Documentation
 
