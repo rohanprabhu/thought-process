@@ -9,7 +9,7 @@ An MCP (Model Context Protocol) server written in Go using the [official MCP Go 
 ## Build & Development Commands
 
 ```bash
-make build          # Compile binary (./echo-server)
+make build          # Compile binary (./thought-process)
 make run            # Build and run
 make dev            # Hot-reload development via air (auto-installs air if missing)
 make clean          # Remove binary and tmp/
@@ -20,6 +20,12 @@ make clean          # Remove binary and tmp/
 Single-file server (`main.go`) that registers MCP tools and runs on `mcp.StdioTransport`. Tools are added with `mcp.AddTool` using typed argument structs — the SDK infers JSON schemas from struct tags automatically.
 
 The `jsonschema` struct tag provides property descriptions but must not start with `WORD=` (e.g., use `jsonschema:"the message"` not `jsonschema:"description=the message"`).
+
+### MCP Tools
+
+| Tool | Args | Description |
+|------|------|-------------|
+| `echo` | `message` (string) | Echoes back a greeting with the provided message |
 
 ## Maintaining Documentation
 

@@ -1,4 +1,4 @@
-BINARY = echo-server
+BINARY = thought-process
 TMP_DIR = tmp
 GOBIN = $(shell go env GOPATH)/bin
 AIR = $(GOBIN)/air

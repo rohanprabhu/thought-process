@@ -2,9 +2,10 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-  cmd = "go build -o ./tmp/echo-server ."
-  bin = "./tmp/echo-server"
+  cmd = "go build -o ./tmp/thought-process ."
+  bin = "./tmp/thought-process"
   include_ext = ["go"]
+  include_dir = [".", "tools", "store"]
   exclude_dir = ["tmp", "vendor"]
   exclude_regex = ["_test.go"]
   delay = 500
