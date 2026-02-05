@@ -40,4 +40,8 @@ type ListFilter struct {
 	// within this many seconds ago. Running and unknown processes are always
 	// included. A value of 0 means no filtering.
 	ExitedSinceSecs int
+
+	// Tags filters to processes matching all specified tag key-value pairs.
+	// A nil or empty map means no tag filtering.
+	Tags map[string]string
 }

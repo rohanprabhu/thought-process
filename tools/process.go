@@ -20,7 +20,8 @@ type StartProcessArgs struct {
 }
 
 type ListProcessesArgs struct {
-	ExitedSinceSecs *int `json:"exited_since_duration,omitempty" jsonschema:"only include exited processes that exited within this many seconds ago (default 10). Increase this to see processes that crashed or exited further in the past"`
+	ExitedSinceSecs *int              `json:"exited_since_duration,omitempty" jsonschema:"only include exited processes that exited within this many seconds ago (default 10). Increase this to see processes that crashed or exited further in the past"`
+	Tags            map[string]string `json:"tags,omitempty" jsonschema:"filter to processes matching all specified tags (e.g. {\"branch\": \"main\", \"service\": \"api\"}). Only processes with all matching tag key-value pairs are returned"`
 }
 
 type GetProcessLogsArgs struct {
@@ -95,7 +96,7 @@ Running processes persist across conversations — always check what's already r
 		if args.ExitedSinceSecs != nil {
 			secs = *args.ExitedSinceSecs
 		}
-		views, err := mgr.List(process.ListFilter{ExitedSinceSecs: secs})
+		views, err := mgr.List(process.ListFilter{ExitedSinceSecs: secs, Tags: args.Tags})
 		if err != nil {
 			return nil, nil, fmt.Errorf("listing processes: %w", err)
 		}

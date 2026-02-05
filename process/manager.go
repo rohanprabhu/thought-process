@@ -164,6 +164,20 @@ func (m *Manager) List(f ListFilter) ([]ProcessView, error) {
 			}
 		}
 
+		// Filter by tags if specified.
+		if len(f.Tags) > 0 {
+			match := true
+			for k, v := range f.Tags {
+				if info.Tags[k] != v {
+					match = false
+					break
+				}
+			}
+			if !match {
+				continue
+			}
+		}
+
 		views = append(views, ProcessView{
 			ProcessInfo: info,
 			Status:      status,
