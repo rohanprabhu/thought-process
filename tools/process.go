@@ -13,6 +13,7 @@ type StartProcessArgs struct {
 	Command string            `json:"command" jsonschema:"the command to run (e.g. npm, python, go, docker-compose). Do NOT use this for short-lived commands like grep, ls, cat, etc. — use your built-in shell tools for those instead"`
 	Args    []string          `json:"args,omitempty" jsonschema:"arguments for the command (e.g. [\"run\", \"dev\", \"--port\", \"3001\"])"`
 	Cwd     string            `json:"cwd,omitempty" jsonschema:"working directory for the command. Set this to the worktree or repo root so the process runs in the correct context"`
+	Env     map[string]string `json:"env,omitempty" jsonschema:"environment variables to set for the process (e.g. {\"NODE_ENV\": \"development\", \"PORT\": \"3001\"}). These are added to the current environment, not replacing it"`
 	Tags    map[string]string `json:"tags,omitempty" jsonschema:"key-value metadata tags for organizing and filtering processes. Always tag with context you have: 'branch' (git branch name), 'worktree' (worktree path), 'role' (e.g. 'frontend', 'backend', 'db'), 'stack' (e.g. 'next', 'rails'). Tags let you find and manage related processes later"`
 	Ports   []int             `json:"ports,omitempty" jsonschema:"ports this process listens on. Always specify known ports so you can detect conflicts and avoid port collisions across branches/worktrees"`
 }
@@ -57,7 +58,7 @@ Before starting a process, call list_processes first to check if an equivalent p
 			}, nil, nil
 		}
 
-		view, err := mgr.Start(args.Command, args.Args, args.Cwd, args.Tags, args.Ports)
+		view, err := mgr.Start(args.Command, args.Args, args.Cwd, args.Env, args.Tags, args.Ports)
 		if err != nil {
 			return nil, nil, fmt.Errorf("starting process: %w", err)
 		}

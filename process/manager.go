@@ -45,7 +45,7 @@ func NewManager(store store.Store, logDir string) *Manager {
 }
 
 // Start launches a subprocess and returns its ProcessView.
-func (m *Manager) Start(command string, args []string, cwd string, tags map[string]string, ports []int) (*ProcessView, error) {
+func (m *Manager) Start(command string, args []string, cwd string, env map[string]string, tags map[string]string, ports []int) (*ProcessView, error) {
 	id, err := generateID()
 	if err != nil {
 		return nil, fmt.Errorf("generating process ID: %w", err)
@@ -69,6 +69,13 @@ func (m *Manager) Start(command string, args []string, cwd string, tags map[stri
 	cmd.Stdout = logFile
 	cmd.Stderr = logFile
 	cmd.Dir = cwd
+	// Start with the current environment and add any custom env vars.
+	if len(env) > 0 {
+		cmd.Env = os.Environ()
+		for k, v := range env {
+			cmd.Env = append(cmd.Env, k+"="+v)
+		}
+	}
 	// Detach the child into its own process group so it isn't killed when the
 	// MCP server's stdin is closed.
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
@@ -83,6 +90,7 @@ func (m *Manager) Start(command string, args []string, cwd string, tags map[stri
 		Command:   command,
 		Args:      args,
 		Cwd:       cwd,
+		Env:       env,
 		Tags:      tags,
 		Ports:     ports,
 		PID:       cmd.Process.Pid,

@@ -18,6 +18,7 @@ type ProcessInfo struct {
 	Command   string            `json:"command"`
 	Args      []string          `json:"args"`
 	Cwd       string            `json:"cwd,omitempty"`
+	Env       map[string]string `json:"env,omitempty"`
 	Tags      map[string]string `json:"tags,omitempty"`
 	Ports     []int             `json:"ports,omitempty"`
 	PID       int               `json:"pid"`

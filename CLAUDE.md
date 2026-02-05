@@ -36,7 +36,7 @@ main.go
 | Tool | Args | Description |
 |------|------|-------------|
 | `echo` | `message` (string) | Echoes back a greeting with the provided message |
-| `start_process` | `command` (string, required), `args` ([]string), `cwd` (string), `tags` (map), `ports` ([]int) | Start and track a long-running process (dev servers, watchers, builds, databases). Tag with branch/worktree/role for isolation. Check list_processes first to avoid duplicates. |
+| `start_process` | `command` (string, required), `args` ([]string), `cwd` (string), `env` (map), `tags` (map), `ports` ([]int) | Start and track a long-running process (dev servers, watchers, builds, databases). Tag with branch/worktree/role for isolation. Check list_processes first to avoid duplicates. |
 | `list_processes` | `exited_since_duration` (int, default 10) | List tracked processes with status, tags, and ports. Call before starting new processes to avoid duplicates and port conflicts. Processes persist across conversations. |
 | `get_process_logs` | `process_id` (string, required) | Get the last ~100KB of stdout/stderr. Primary debugging tool for tracked processes — check when things aren't working. |
 | `kill_process` | `process_id` (string, required) | Kill a tracked process (SIGTERM, then SIGKILL after 5s). Use when switching branches, freeing ports, or cleaning up. |
