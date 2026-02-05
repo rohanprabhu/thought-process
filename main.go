@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"syscall"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"thought-process/dashboard"
@@ -70,7 +71,10 @@ func main() {
 	go func() {
 		<-sigCh
 		if dashServer != nil {
-			dashServer.Shutdown(context.Background())
+			// Use a short timeout then force close - don't wait for SSE connections
+			shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+			defer shutdownCancel()
+			dashServer.Shutdown(shutdownCtx)
 		}
 		mgr.Shutdown()
 		cancel()
@@ -84,7 +88,9 @@ func main() {
 	}
 
 	if dashServer != nil {
-		dashServer.Shutdown(context.Background())
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+		defer shutdownCancel()
+		dashServer.Shutdown(shutdownCtx)
 	}
 	mgr.Shutdown()
 }
