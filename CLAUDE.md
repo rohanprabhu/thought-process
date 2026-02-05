@@ -40,6 +40,7 @@ main.go
 | `list_processes` | `exited_since_duration` (int, default 10) | List tracked processes with status, tags, and ports. Call before starting new processes to avoid duplicates and port conflicts. Processes persist across conversations. |
 | `get_process_logs` | `process_id` (string, required) | Get the last ~100KB of stdout/stderr. Primary debugging tool for tracked processes — check when things aren't working. |
 | `kill_process` | `process_id` (string, required) | Kill a tracked process (SIGTERM, then SIGKILL after 5s). Use when switching branches, freeing ports, or cleaning up. |
+| `get_free_port` | none | Get an available TCP port. Note: port may be taken by the time you use it, so retry once or twice if binding fails. |
 
 ## Maintaining Documentation
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"thought-process/process"
@@ -29,6 +30,8 @@ type GetProcessLogsArgs struct {
 type KillProcessArgs struct {
 	ProcessID string `json:"process_id" jsonschema:"the ID of the process to kill (from start_process or list_processes)"`
 }
+
+type GetFreePortArgs struct{}
 
 // RegisterProcessTools registers start_process, list_processes, and
 // get_process_logs on the given MCP server.
@@ -174,6 +177,28 @@ Use this to stop processes you no longer need — e.g. when switching branches, 
 		return &mcp.CallToolResult{
 			Content: []mcp.Content{
 				&mcp.TextContent{Text: string(data)},
+			},
+		}, nil, nil
+	})
+
+	mcp.AddTool(server, &mcp.Tool{
+		Name: "get_free_port",
+		Description: `Get an available TCP port on the local machine.
+
+Use this when you need to start a process on a dynamic port and don't have a specific port in mind. The returned port was free at the time of the call, but there is a small race window before your process binds to it — another process could claim it first. If your process fails to bind, retry this tool once or twice before giving up.
+
+Typical usage: call get_free_port, then pass the returned port to start_process via args or env.`,
+	}, func(ctx context.Context, req *mcp.CallToolRequest, args GetFreePortArgs) (*mcp.CallToolResult, any, error) {
+		listener, err := net.Listen("tcp", "127.0.0.1:0")
+		if err != nil {
+			return nil, nil, fmt.Errorf("finding free port: %w", err)
+		}
+		port := listener.Addr().(*net.TCPAddr).Port
+		listener.Close()
+
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: fmt.Sprintf("%d", port)},
 			},
 		}, nil, nil
 	})
