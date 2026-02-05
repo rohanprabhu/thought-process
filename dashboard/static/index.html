@@ -25,36 +25,73 @@
         </div>
     </header>
 
-    <main>
-        <table id="processes-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Command</th>
-                    <th>CWD</th>
-                    <th>Status</th>
-                    <th>PID</th>
-                    <th>Ports</th>
-                    <th>Env</th>
-                    <th>Tags</th>
-                    <th>Started</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="processes-body">
-                <tr><td colspan="10" class="loading">Loading...</td></tr>
-            </tbody>
-        </table>
-    </main>
-
-    <div id="logs-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Logs: <span id="logs-process-id"></span> <span id="logs-status" class="logs-status"></span></h2>
-                <button id="close-logs">&times;</button>
+    <div class="split-view">
+        <aside class="process-list" id="process-list">
+            <div class="list-header">Processes</div>
+            <div class="list-content" id="processes-body">
+                <div class="loading">Loading...</div>
             </div>
-            <pre id="logs-content"></pre>
-        </div>
+        </aside>
+
+        <main class="detail-panel" id="detail-panel">
+            <div class="no-selection" id="no-selection">
+                <p>Select a process to view details and logs</p>
+            </div>
+            <div class="process-detail hidden" id="process-detail">
+                <div class="detail-header">
+                    <div class="detail-title">
+                        <h2 id="detail-command"></h2>
+                        <span id="detail-status" class="status"></span>
+                        <span id="logs-status" class="logs-status"></span>
+                    </div>
+                    <div class="detail-actions">
+                        <button class="btn-kill" id="detail-kill-btn">Kill</button>
+                    </div>
+                </div>
+                <div class="detail-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>ID</label>
+                            <code id="detail-id"></code>
+                        </div>
+                        <div class="info-item">
+                            <label>PID</label>
+                            <span id="detail-pid"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Started</label>
+                            <span id="detail-started"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Exited</label>
+                            <span id="detail-exited"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Working Directory</label>
+                            <code id="detail-cwd"></code>
+                        </div>
+                        <div class="info-item">
+                            <label>Ports</label>
+                            <span id="detail-ports"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Tags</label>
+                            <div id="detail-tags"></div>
+                        </div>
+                        <div class="info-item">
+                            <label>Environment</label>
+                            <div id="detail-env"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="logs-section">
+                    <div class="logs-header">
+                        <h3>Logs</h3>
+                    </div>
+                    <pre id="logs-content"></pre>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script src="app.js"></script>

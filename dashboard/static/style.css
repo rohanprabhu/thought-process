@@ -8,7 +8,10 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: #1a1a2e;
     color: #eee;
-    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 header {
@@ -18,6 +21,7 @@ header {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #0f3460;
+    flex-shrink: 0;
 }
 
 header h1 {
@@ -61,47 +65,190 @@ button:hover {
     background: #1a4a7a;
 }
 
-main {
-    padding: 2rem;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #16213e;
-    border-radius: 8px;
+/* Split View Layout */
+.split-view {
+    display: flex;
+    flex: 1;
     overflow: hidden;
 }
 
-th, td {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid #0f3460;
+/* Left Panel - Process List */
+.process-list {
+    width: 320px;
+    min-width: 280px;
+    background: #16213e;
+    border-right: 1px solid #0f3460;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-th {
-    background: #0f3460;
+.list-header {
+    padding: 1rem;
     font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    background: #0f3460;
+    border-bottom: 1px solid #0f3460;
 }
 
-tbody tr:hover {
+.list-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.process-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #0f3460;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.process-item:hover {
     background: #1a2f4e;
 }
 
-.loading {
-    text-align: center;
-    color: #888;
-    padding: 2rem;
+.process-item.selected {
+    background: #1e3a5f;
+    border-left: 3px solid #60a5fa;
 }
 
+.process-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+
+.process-time {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.process-command {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 0.3rem;
+}
+
+.process-meta {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 0.3rem;
+}
+
+.exit-info {
+    color: #9ca3af;
+}
+
+.process-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+/* Right Panel - Detail View */
+.detail-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #1a1a2e;
+}
+
+.no-selection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+    font-size: 1rem;
+}
+
+.process-detail {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.process-detail.hidden {
+    display: none;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: #16213e;
+    border-bottom: 1px solid #0f3460;
+}
+
+.detail-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    overflow: hidden;
+}
+
+.detail-title h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.detail-info {
+    padding: 1rem 1.5rem;
+    background: #16213e;
+    border-bottom: 1px solid #0f3460;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.info-item label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin-bottom: 0.25rem;
+}
+
+.info-item code {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #a78bfa;
+    word-break: break-all;
+}
+
+.info-item span {
+    font-size: 0.9rem;
+}
+
+/* Status badges */
 .status {
     display: inline-block;
-    padding: 0.25rem 0.5rem;
+    padding: 0.2rem 0.5rem;
     border-radius: 4px;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -126,17 +273,13 @@ tbody tr:hover {
     color: #fbbf24;
 }
 
-.tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-}
-
+/* Tags */
 .tag {
+    display: inline-block;
     background: #0f3460;
-    padding: 0.2rem 0.4rem;
+    padding: 0.15rem 0.35rem;
     border-radius: 3px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
 }
 
 .tag-key {
@@ -147,51 +290,22 @@ tbody tr:hover {
     color: #ddd;
 }
 
+/* Ports */
 .ports {
     font-family: monospace;
     color: #60a5fa;
 }
 
-.command {
-    font-family: monospace;
-    max-width: 300px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.cwd-cell {
-    max-width: 150px;
-}
-
-.cwd {
-    font-family: monospace;
-    font-size: 0.85rem;
-    color: #a78bfa;
-    cursor: help;
-}
-
-.muted {
-    color: #555;
-}
-
-.env-cell {
-    max-width: 200px;
-}
-
-.env-vars {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-}
-
+/* Environment variables */
 .env-var {
+    display: inline-block;
     background: #1e3a5f;
     padding: 0.15rem 0.35rem;
     border-radius: 3px;
     font-size: 0.7rem;
     font-family: monospace;
-    white-space: nowrap;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
 }
 
 .env-key {
@@ -202,101 +316,49 @@ tbody tr:hover {
     color: #ddd;
 }
 
-.actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.actions button {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
-}
-
-.btn-logs {
-    background: #1e40af;
-}
-
-.btn-logs:hover {
-    background: #2563eb;
-}
-
-.btn-kill {
-    background: #7f1d1d;
-}
-
-.btn-kill:hover {
-    background: #991b1b;
-}
-
-.btn-kill:disabled {
-    background: #374151;
-    color: #6b7280;
-    cursor: not-allowed;
-}
-
-/* Modal */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal.hidden {
-    display: none;
-}
-
-.modal-content {
-    background: #16213e;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 1000px;
-    max-height: 80vh;
+/* Logs Section */
+.logs-section {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    border: 1px solid #0f3460;
+    overflow: hidden;
 }
 
-.modal-header {
+.logs-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #0f3460;
+    padding: 0.75rem 1.5rem;
+    background: #0f3460;
 }
 
-.modal-header h2 {
-    font-size: 1rem;
+.logs-header h3 {
+    font-size: 0.85rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.modal-header button {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #888;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
+#logs-content {
+    flex: 1;
+    overflow: auto;
+    padding: 1rem;
+    margin: 0;
+    font-family: monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    background: #0f0f1a;
+    white-space: pre-wrap;
+    word-break: break-all;
 }
 
-.modal-header button:hover {
-    color: #fff;
-    background: none;
-}
-
+/* Log status indicator */
 .logs-status {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: normal;
-    padding: 0.2rem 0.5rem;
+    padding: 0.15rem 0.4rem;
     border-radius: 3px;
-    margin-left: 0.5rem;
+    flex-shrink: 0;
 }
 
 .logs-status.streaming {
@@ -315,26 +377,40 @@ tbody tr:hover {
     50% { opacity: 0.6; }
 }
 
-#logs-content {
-    flex: 1;
-    overflow: auto;
-    padding: 1rem;
-    margin: 0;
-    font-family: monospace;
+/* Buttons */
+.btn-kill {
+    background: #7f1d1d;
+    padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
-    line-height: 1.4;
-    background: #0f0f1a;
-    white-space: pre-wrap;
-    word-break: break-all;
+}
+
+.btn-kill:hover {
+    background: #991b1b;
+}
+
+.btn-kill:disabled {
+    background: #374151;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+/* Utility classes */
+.hidden {
+    display: none !important;
+}
+
+.muted {
+    color: #555;
+}
+
+.loading {
+    text-align: center;
+    color: #888;
+    padding: 2rem;
 }
 
 .empty-message {
     text-align: center;
     color: #666;
     padding: 2rem;
-}
-
-.time-ago {
-    color: #888;
-    font-size: 0.85rem;
 }

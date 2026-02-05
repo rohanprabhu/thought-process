@@ -159,16 +159,15 @@ func (s *Server) handleStreamLogs(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendSSEData(w http.ResponseWriter, flusher http.Flusher, data string) {
-	// SSE data field cannot contain newlines directly, so we send each line
+	// SSE format: multi-line data uses "data:" prefix for each line
+	// We send all lines as a single event to avoid overwhelming the client
 	lines := strings.Split(data, "\n")
 	for i, line := range lines {
-		if i < len(lines)-1 {
-			fmt.Fprintf(w, "data: %s\n\n", line)
-		} else if line != "" {
-			// Last line without trailing newline
-			fmt.Fprintf(w, "data: %s\n\n", line)
+		if i < len(lines)-1 || line != "" {
+			fmt.Fprintf(w, "data: %s\n", line)
 		}
 	}
+	fmt.Fprintf(w, "\n") // Empty line marks end of event
 	flusher.Flush()
 }
 

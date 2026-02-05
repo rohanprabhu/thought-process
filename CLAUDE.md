@@ -40,10 +40,10 @@ An optional web dashboard for viewing and managing processes. Start with the `-d
 ./thought-process -dashboard :8080
 ```
 
-The dashboard provides:
-- Real-time process list with status, tags, and ports
-- Streaming log viewer with live updates via Server-Sent Events (SSE)
-- Kill button for running processes
+The dashboard provides a split-view interface:
+- **Left panel**: Process list with status, command, tags, start time, and exit time
+- **Right panel**: Detailed process info and streaming logs (via SSE) for the selected process
+- Kill button that refreshes the page to show updated status
 - Auto-refresh every 5 seconds
 
 The `dashboard/` package contains the HTTP server and embedded static files. The `process.ProcessManager` interface allows both MCP tools and the HTTP API to share the same process manager.
