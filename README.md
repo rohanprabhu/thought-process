@@ -63,6 +63,67 @@ thought-process stores data in `~/.thought-process/`:
 - `data/` — process metadata (one file per tracked process)
 - `logs/` — stdout/stderr logs for each process
 
+## Tagging Conventions
+
+Tags are the key to making processes discoverable across sessions and between different agents. To get the most out of thought-process, define stable tagging conventions in your agent instructions (e.g., `CLAUDE.md`, system prompts, or similar).
+
+### Recommended Tags
+
+| Tag | Purpose | Example Values |
+|-----|---------|----------------|
+| `branch` | Git branch name | `main`, `feature-auth`, `fix-123` |
+| `worktree` | Git worktree path | `/code/myapp-main`, `/code/myapp-feature` |
+| `service` | Service/component name | `api`, `frontend`, `postgres`, `redis` |
+| `role` | Functional role | `server`, `worker`, `watcher`, `build` |
+| `stack` | Technology stack | `next`, `rails`, `django`, `go` |
+
+### Why This Matters
+
+1. **Cross-session continuity** — An agent can find processes it (or a previous session) started by querying for familiar tags like `branch: feature-x`.
+
+2. **Multi-agent coordination** — Different agents working on the same project can discover each other's processes. Agent A starts a database with `service: postgres`, Agent B finds it and configures the API to connect.
+
+3. **Service dependencies** — When starting an API server that needs a database, the agent can first check `list_processes` for `service: postgres` to get its port, then pass that to the API's environment.
+
+### Setting Up Agent Instructions
+
+Add tagging guidelines to your project's `CLAUDE.md` (or equivalent):
+
+```markdown
+## Process Management
+
+When using thought-process to start long-running processes:
+
+- Always tag with `branch` set to the current git branch
+- Always tag with `worktree` if working in a git worktree
+- Always tag with `service` using these names:
+  - `api` — the backend API server (port 3001)
+  - `web` — the frontend dev server (port 3000)
+  - `db` — PostgreSQL database (port 5432)
+  - `redis` — Redis cache (port 6379)
+- Before starting a service, check `list_processes` for existing instances
+- When configuring service connections, look up dependent services by tag
+```
+
+### Example: Service Discovery
+
+Agent starting an API that depends on a database:
+
+```
+# First, find the database
+processes = list_processes()
+db = find_by_tag(processes, service: "postgres", branch: "feature-x")
+
+# Start API with the database connection
+start_process(
+  command: "npm",
+  args: ["run", "dev"],
+  env: {"DATABASE_URL": "postgres://localhost:" + db.ports[0]},
+  tags: {"branch": "feature-x", "service": "api"},
+  ports: [3001]
+)
+```
+
 ## Usage Examples
 
 ### Starting a dev server
