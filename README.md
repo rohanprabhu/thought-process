@@ -179,6 +179,25 @@ port = get_free_port()
 start_process(command: "node", args: ["server.js"], env: {"PORT": port}, ports: [port])
 ```
 
+## Web Dashboard
+
+thought-process includes an optional web dashboard for viewing and managing processes from a browser. Start it with the `-dashboard` flag:
+
+```bash
+./thought-process -dashboard :8080
+```
+
+Then open http://localhost:8080 in your browser.
+
+The dashboard provides:
+- **Process list** — view all processes with status, command, PID, ports, tags, and start time
+- **Streaming logs** — click "Logs" to see live stdout/stderr output with real-time updates
+- **Process control** — click "Kill" to stop running processes
+- **Auto-refresh** — updates every 5 seconds
+- **Time filtering** — filter exited processes by how recently they stopped
+
+The dashboard runs alongside the MCP server, sharing the same process manager. Changes made via MCP tools are immediately visible in the dashboard and vice versa.
+
 ## Development
 
 ```bash

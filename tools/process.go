@@ -36,7 +36,7 @@ type GetFreePortArgs struct{}
 
 // RegisterProcessTools registers start_process, list_processes, and
 // get_process_logs on the given MCP server.
-func RegisterProcessTools(server *mcp.Server, mgr *process.Manager) {
+func RegisterProcessTools(server *mcp.Server, mgr process.ProcessManager) {
 	mcp.AddTool(server, &mcp.Tool{
 		Name: "start_process",
 		Description: `Start and track a long-running process (dev servers, watchers, builds, databases, etc.). Returns a process ID for checking logs and stopping it later.

@@ -26,10 +26,27 @@ main.go
   ├── store.NewDirStore(~/.thought-process/data/)
   ├── process.NewManager(store, ~/.thought-process/logs/)
   ├── tools.RegisterEcho(server)
-  └── tools.RegisterProcessTools(server, manager)
+  ├── tools.RegisterProcessTools(server, manager)
+  └── dashboard.NewServer(addr, manager)  # if -dashboard flag provided
 ```
 
 **Data directory:** `~/.thought-process/` contains `data/` (one file per key, no long-running locks) and `logs/` (process stdout/stderr).
+
+### Web Dashboard
+
+An optional web dashboard for viewing and managing processes. Start with the `-dashboard` flag:
+
+```bash
+./thought-process -dashboard :8080
+```
+
+The dashboard provides:
+- Real-time process list with status, tags, and ports
+- Streaming log viewer with live updates via Server-Sent Events (SSE)
+- Kill button for running processes
+- Auto-refresh every 5 seconds
+
+The `dashboard/` package contains the HTTP server and embedded static files. The `process.ProcessManager` interface allows both MCP tools and the HTTP API to share the same process manager.
 
 ### MCP Tools
 
@@ -52,5 +69,4 @@ Keep project documentation up to date as the codebase evolves:
 
 ### Subdirectory Documentation
 
-<!-- Add links here as new directories get their own CLAUDE.md -->
-<!-- Example: - [tools/CLAUDE.md](tools/CLAUDE.md) — MCP tool implementations -->
+- [dashboard/](dashboard/) — Web dashboard with embedded static files (HTTP API + vanilla JS frontend)

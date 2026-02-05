@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thought-process Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>thought-process</h1>
+        <div class="controls">
+            <label>
+                Show exited processes from last
+                <select id="exited-filter">
+                    <option value="10">10 seconds</option>
+                    <option value="60">1 minute</option>
+                    <option value="300">5 minutes</option>
+                    <option value="3600" selected>1 hour</option>
+                    <option value="86400">24 hours</option>
+                    <option value="0">All time</option>
+                </select>
+            </label>
+            <button id="refresh-btn">Refresh</button>
+        </div>
+    </header>
+
+    <main>
+        <table id="processes-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Command</th>
+                    <th>CWD</th>
+                    <th>Status</th>
+                    <th>PID</th>
+                    <th>Ports</th>
+                    <th>Env</th>
+                    <th>Tags</th>
+                    <th>Started</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="processes-body">
+                <tr><td colspan="10" class="loading">Loading...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <div id="logs-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Logs: <span id="logs-process-id"></span> <span id="logs-status" class="logs-status"></span></h2>
+                <button id="close-logs">&times;</button>
+            </div>
+            <pre id="logs-content"></pre>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

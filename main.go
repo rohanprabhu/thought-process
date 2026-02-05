@@ -2,19 +2,25 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
 	"syscall"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"thought-process/dashboard"
 	"thought-process/process"
 	"thought-process/store"
 	"thought-process/tools"
 )
 
 func main() {
+	dashboardAddr := flag.String("dashboard", "", "address to serve dashboard on (e.g. :8080)")
+	flag.Parse()
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("getting home directory: %v", err)
@@ -47,10 +53,25 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// Start dashboard HTTP server if requested.
+	var dashServer *dashboard.Server
+	if *dashboardAddr != "" {
+		dashServer = dashboard.NewServer(*dashboardAddr, mgr)
+		go func() {
+			log.Printf("Dashboard available at http://%s", *dashboardAddr)
+			if err := dashServer.Start(); err != nil && err != http.ErrServerClosed {
+				log.Printf("dashboard server error: %v", err)
+			}
+		}()
+	}
+
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		<-sigCh
+		if dashServer != nil {
+			dashServer.Shutdown(context.Background())
+		}
 		mgr.Shutdown()
 		cancel()
 	}()
@@ -62,5 +83,8 @@ func main() {
 		}
 	}
 
+	if dashServer != nil {
+		dashServer.Shutdown(context.Background())
+	}
 	mgr.Shutdown()
 }

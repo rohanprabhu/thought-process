@@ -225,6 +225,19 @@ func (m *Manager) GetLogs(processID string) (string, error) {
 	return string(data), nil
 }
 
+// GetLogPath returns the path to a process's log file for streaming.
+func (m *Manager) GetLogPath(processID string) (string, error) {
+	raw, err := m.store.Get(keyPrefix + processID)
+	if err != nil {
+		return "", fmt.Errorf("process %q not found", processID)
+	}
+	var info ProcessInfo
+	if err := json.Unmarshal([]byte(raw), &info); err != nil {
+		return "", fmt.Errorf("decoding process info: %w", err)
+	}
+	return info.LogPath, nil
+}
+
 // Kill sends SIGTERM to a tracked process, waits up to 5 seconds, then
 // SIGKILLs it if still alive. Returns the final ProcessView.
 func (m *Manager) Kill(processID string) (*ProcessView, error) {
