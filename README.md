@@ -21,6 +21,8 @@ thought-process provides MCP tools that let agents manage processes across sessi
 - **Log access** — retrieve stdout/stderr for debugging
 - **Graceful shutdown** — SIGTERM with SIGKILL fallback
 
+All state is persisted locally to `~/.thought-process/`, so process metadata and logs survive across MCP server restarts, conversation sessions, and different agents. Any agent with access to thought-process can discover and manage processes started by other agents or previous sessions.
+
 For details on internals, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Tools
