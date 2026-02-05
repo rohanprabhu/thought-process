@@ -30,7 +30,7 @@ For details on internals, see [ARCHITECTURE.md](ARCHITECTURE.md).
 | Tool | Description |
 |------|-------------|
 | `start_process` | Start a long-running process with optional tags, ports, env vars, and working directory. Returns a process ID for later reference. |
-| `list_processes` | List all tracked processes with their status, tags, and ports. Use before starting new processes to avoid duplicates. |
+| `list_processes` | List all tracked processes with their status, tags, and ports. Supports filtering by tags to find specific processes. Use before starting new processes to avoid duplicates. |
 | `get_process_logs` | Get the last ~100KB of stdout/stderr for a process. Primary debugging tool. |
 | `kill_process` | Stop a process (SIGTERM, then SIGKILL after 5s). Use when switching branches or cleaning up. |
 | `get_free_port` | Get an available TCP port for dynamic port assignment. |
@@ -114,9 +114,9 @@ When using thought-process to start long-running processes:
 Agent starting an API that depends on a database:
 
 ```
-# First, find the database
-processes = list_processes()
-db = find_by_tag(processes, service: "postgres", branch: "feature-x")
+# First, find the database by filtering on tags
+db_processes = list_processes(tags: {"service": "postgres", "branch": "feature-x"})
+db = db_processes[0]
 
 # Start API with the database connection
 start_process(
@@ -150,6 +150,15 @@ list_processes()
 ```
 
 Returns all tracked processes with status (running/exited/failed), tags, and ports.
+
+### Filtering by tags
+
+```
+list_processes(tags: {"branch": "feature-x"})
+list_processes(tags: {"service": "api", "branch": "main"})
+```
+
+Returns only processes matching all specified tag key-value pairs.
 
 ### Debugging a failing process
 
