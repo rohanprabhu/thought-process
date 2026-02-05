@@ -21,6 +21,8 @@ thought-process provides MCP tools that let agents manage processes across sessi
 - **Log access** — retrieve stdout/stderr for debugging
 - **Graceful shutdown** — SIGTERM with SIGKILL fallback
 
+For details on internals, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## Tools
 
 | Tool | Description |
